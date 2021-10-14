@@ -1,13 +1,10 @@
 package com.fbs.user.controller;
 
 import com.fbs.user.model.BookTicket;
-import com.fbs.user.model.dto.BookTicketDTO;
 import com.fbs.user.service.UserOperationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.websocket.server.PathParam;
 
 @RestController
 public class UserOperationController {

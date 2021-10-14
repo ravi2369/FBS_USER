@@ -3,7 +3,6 @@ package com.fbs.user.service;
 import com.fbs.user.exceptions.FBSException;
 import com.fbs.user.model.BookTicket;
 import com.fbs.user.model.FlightSchedule;
-import com.fbs.user.model.dto.BookTicketDTO;
 
 import java.util.List;
 

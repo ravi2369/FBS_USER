@@ -1,6 +1,8 @@
 package com.fbs.user.model;
 
 import lombok.Data;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -13,7 +15,8 @@ import java.util.List;
 public class BookTicket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String PNR;
+    private Long ticketId;
+    private String PNRNumber;
     private String flightNumber;
     private LocalDateTime departureDate;
     private LocalDateTime arrivalDate;
@@ -23,8 +26,10 @@ public class BookTicket {
     private String name;
     private int seats;
     private String meal;
-    @OneToMany(targetEntity = Passenger.class,cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    @JoinColumn(name = "PNR",referencedColumnName = "PNR")
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @Fetch(FetchMode.JOIN)
+    @JoinColumn(name = "ticketId")
     private List<Passenger> passengers;
 
     @Transient

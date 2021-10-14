@@ -4,7 +4,6 @@ import com.fbs.user.exceptions.FBSException;
 import com.fbs.user.model.BookTicket;
 import com.fbs.user.model.Flight;
 import com.fbs.user.model.FlightSchedule;
-import com.fbs.user.model.dto.BookTicketDTO;
 import com.fbs.user.repository.BookTicketRepository;
 import com.fbs.user.repository.FlightRepository;
 import com.fbs.user.repository.SearchFlightRepository;
@@ -12,12 +11,9 @@ import com.fbs.user.service.UserOperationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-
-import static com.fbs.user.util.DateUtility.convertToFbsFormat;
 
 @Service
 public class UserOperationServiceImpl implements UserOperationService {
@@ -48,19 +44,10 @@ public class UserOperationServiceImpl implements UserOperationService {
         if (flightNumber != null) {
             Optional<FlightSchedule> flightSchedule = searchFlightRepository.findScheduledFlight(flightNumber);
             if (flightSchedule.isPresent()) {
-               /* if (bookTicketDTO.() != null) {
-                    bookTicket.setDepartureDate((LocalDateTime) convertToFbsFormat(bookTicketDTO.getStartDate()));
-                }*/
-                //bookTicket.setPNR("PNR" + new Random().nextInt());
-                /*bookTicket.setFlightNumber(flightSchedule.get().getFlightNumber());
-                bookTicket.setArrivalDate(flightSchedule.get().getEndDateTime());
-                bookTicket.setFromPlace(flightSchedule.get().getFromLocation());
+                bookTicket.setPNRNumber("PNR" + new Random().nextInt());
+                bookTicket.setFlightNumber(flightSchedule.get().getFlightNumber());
                 bookTicket.setToPlace(flightSchedule.get().getToLocation());
-                bookTicket.setEmail(BookTicket.getEmail());
-                bookTicket.setName(BookTicket.getName());
-                bookTicket.setMeal(flightSchedule.get().getMeal());
-                bookTicket.setPassengers(BookTicket.getPassengers());
-                bookTicket.setSeats(BookTicket.getSeats());*/
+                bookTicket.setArrivalDate(flightSchedule.get().getEndDateTime());
 
                 Optional<Flight> flight = flightRepository.findById(flightNumber);
                 if (flight.isPresent()) {
