@@ -1,0 +1,37 @@
+server:
+  servlet:
+    context-path: /fbs/user
+  port: 9002
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+    hikari:
+      minimum-idle: 10
+      maximum-pool-size: 100
+      pool-name: integration-pool
+      #      transaction-isolation: TRANSACTION_READ_UNCOMMITTED
+      connection-timeout: 30000
+      max-lifetime: 1800000
+    url: jdbc:mysql://localhost:3306/fbs_dev
+    username: root
+    password: root
+    driverClassName: com.mysql.cj.jdbc.Driver
+  #    url: jdbc:sqlserver://localhost:1433;databaseName=FBS_DEV;
+  #    username: SIGWDEV
+  #    password: SGDEV
+  #    driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+  jpa:
+    hibernate.ddl-auto: update
+    show-sql: true
+
+---
+
+admin:
+  url: http://localhost:9001/fbs/admin/
+
+
+
+
