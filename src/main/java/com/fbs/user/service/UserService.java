@@ -1,10 +1,11 @@
 package com.fbs.user.service;
 
 import com.fbs.user.exceptions.FBSException;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
+import com.fbs.user.model.BookingRequest;
 
 
 public interface UserService {
-    ResponseEntity search(String fromLocation, String toLocation) throws FBSException;
+    String search(String fromLocation, String toLocation) throws FBSException;
+
+    String book(String flightNumber, BookingRequest request);
 }

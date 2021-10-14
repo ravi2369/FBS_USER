@@ -28,9 +28,11 @@ spring:
     show-sql: true
 
 ---
-
+jackson:
+  date-format: "dd-MM-yyyy HH:mm:ss"
+---
 admin:
-  url: http://localhost:9001/fbs/admin/
+  url: http://localhost:9001/fbs/admin
 
 
 

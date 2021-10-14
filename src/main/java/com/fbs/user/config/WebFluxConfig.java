@@ -1,22 +1,26 @@
 package com.fbs.user.config;
 
-import com.fbs.user.exceptions.FBSException;
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.reactive.ClientHttpConnector;
-import org.springframework.http.client.reactive.ReactorClientHttpConnector;
-import org.springframework.web.reactive.config.EnableWebFlux;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.netty.http.client.HttpClient;
 
 @Configuration
 public class WebFluxConfig {
 
+    private static String adminUrl;
+    @Autowired
+    private WebClient webClient;
 
-    @Bean
+    public WebFluxConfig(@Value("${admin.url}") String adminUrl) {
+        this.adminUrl = adminUrl;
+    }
+
+   /* @Bean
     public WebClient webClient() {
         WebClient.Builder wbBuilder = WebClient.builder();
 
@@ -36,5 +40,18 @@ public class WebFluxConfig {
 
         WebClient webClient = wbBuilder.build();
         return webClient;
+    }*/
+
+    @Bean
+    public RestTemplate getRestTemplate() {
+        return new RestTemplate();
+    }
+
+    @Bean
+    public WebClient getWebClient() {
+        return WebClient.builder()
+                .baseUrl(adminUrl)
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .build();
     }
 }

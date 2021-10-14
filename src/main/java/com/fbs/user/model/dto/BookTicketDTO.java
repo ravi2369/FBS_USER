@@ -1,12 +1,14 @@
-package com.fbs.user.model;
+package com.fbs.user.model.dto;
 
+import com.fbs.user.model.Passenger;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class BookingRequest {
-    private String departureDate;
+public class BookTicketDTO {
+    private String PNR;
+    private String startDate;
     private String fromPlace;
     private String toPlace;
     private String email;
