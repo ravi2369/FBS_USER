@@ -10,4 +10,8 @@ public interface UserOperationService {
     List<FlightSchedule> findFlightSchedule(String fromLocation, String toLocation) throws FBSException;
 
     BookTicket bookTicket(String flightNumber, BookTicket bookTicket);
+
+    List<BookTicket> searchByEmail(String PNRNumber) throws FBSException;
+
+    List<BookTicket> searchByPnr(String PNRNumber) throws FBSException;
 }

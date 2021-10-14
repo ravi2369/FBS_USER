@@ -13,10 +13,28 @@ public class UserOperationController {
     private UserOperationService userOperationService;
 
 
-    @PostMapping(value = "/search")
+    @GetMapping(value = "/search")
     public ResponseEntity search(@RequestParam String fromLocation, @RequestParam String toLocation) {
         try {
             return ResponseEntity.ok().body(userOperationService.findFlightSchedule(fromLocation, toLocation));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/search/email")
+    public ResponseEntity searchByEmail(@RequestParam String email) {
+        try {
+            return ResponseEntity.ok().body(userOperationService.searchByEmail(email));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping(value = "/search/pnr")
+    public ResponseEntity searchByPnr(@RequestParam String PNRNumber) {
+        try {
+            return ResponseEntity.ok().body(userOperationService.searchByPnr(PNRNumber));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

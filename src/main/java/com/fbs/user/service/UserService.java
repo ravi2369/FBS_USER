@@ -7,5 +7,6 @@ import com.fbs.user.model.BookingRequest;
 public interface UserService {
     String search(String fromLocation, String toLocation) throws FBSException;
 
-    String book(String flightNumber, BookingRequest request);
+    String book(String flightNumber, BookingRequest request) throws FBSException;
+
 }

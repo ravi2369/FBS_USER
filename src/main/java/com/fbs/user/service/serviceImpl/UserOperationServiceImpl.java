@@ -54,12 +54,23 @@ public class UserOperationServiceImpl implements UserOperationService {
                     flight.get().setAvailableSeats(flight.get().getAvailableSeats() - bookTicket.getSeats());
                     flightRepository.save(flight.get());
                 }
-                return bookTicketRepository.save(bookTicket);
+                BookTicket ticket = bookTicketRepository.save(bookTicket);
+                return ticket;
             } else {
                 throw new FBSException("scheduled flight not found with this " + flightNumber + " flight number, please take another flight number");
             }
         } else {
             throw new FBSException("Flight number required to book ticket.");
         }
+    }
+
+    @Override
+    public List<BookTicket> searchByEmail(String email) throws FBSException {
+        return bookTicketRepository.searchByEmail(email);
+    }
+
+    @Override
+    public List<BookTicket> searchByPnr(String PNRNumber) throws FBSException {
+        return bookTicketRepository.searchByPnr(PNRNumber);
     }
 }

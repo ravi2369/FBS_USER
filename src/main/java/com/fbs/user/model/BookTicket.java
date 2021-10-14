@@ -1,5 +1,6 @@
 package com.fbs.user.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -32,6 +33,7 @@ public class BookTicket {
     @JoinColumn(name = "ticketId")
     private List<Passenger> passengers;
 
+    @JsonIgnore
     @Transient
     private String startDate;
 
