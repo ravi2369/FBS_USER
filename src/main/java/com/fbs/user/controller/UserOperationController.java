@@ -1,6 +1,6 @@
 package com.fbs.user.controller;
 
-import com.fbs.user.model.BookTicket;
+import com.fbs.user.model.dto.BookTicketDTO;
 import com.fbs.user.service.UserOperationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +22,24 @@ public class UserOperationController {
         }
     }
 
+    @PostMapping(value = "/book/{flightNumber}")
+    public ResponseEntity book(@PathVariable String flightNumber, @RequestBody BookTicketDTO bookTicketDTO) {
+        try {
+            return ResponseEntity.ok().body(userOperationService.bookTicket(flightNumber, bookTicketDTO));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping(value = "/cancel/{pnrNo}/{status}")
+    public ResponseEntity cancelTicket(@PathVariable String pnrNo, @PathVariable String status) {
+        try {
+            return ResponseEntity.ok().body(userOperationService.cancelTicket(pnrNo, status));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @GetMapping(value = "/search/email")
     public ResponseEntity searchByEmail(@RequestParam String email) {
         try {
@@ -31,19 +49,10 @@ public class UserOperationController {
         }
     }
 
-    @GetMapping(value = "/search/pnr")
-    public ResponseEntity searchByPnr(@RequestParam String PNRNumber) {
+    @GetMapping(value = "/search/pnrNo")
+    public ResponseEntity searchByPnr(@RequestParam String pnrNo) {
         try {
-            return ResponseEntity.ok().body(userOperationService.searchByPnr(PNRNumber));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @PostMapping(value = "/book/{flightNumber}")
-    public ResponseEntity book(@PathVariable String flightNumber, @RequestBody BookTicket bookTicket) {
-        try {
-            return ResponseEntity.ok().body(userOperationService.bookTicket(flightNumber, bookTicket));
+            return ResponseEntity.ok().body(userOperationService.searchByPnr(pnrNo));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

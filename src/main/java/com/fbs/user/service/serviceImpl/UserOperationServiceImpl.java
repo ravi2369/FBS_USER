@@ -4,16 +4,21 @@ import com.fbs.user.exceptions.FBSException;
 import com.fbs.user.model.BookTicket;
 import com.fbs.user.model.Flight;
 import com.fbs.user.model.FlightSchedule;
+import com.fbs.user.model.dto.BookTicketDTO;
 import com.fbs.user.repository.BookTicketRepository;
 import com.fbs.user.repository.FlightRepository;
 import com.fbs.user.repository.SearchFlightRepository;
 import com.fbs.user.service.UserOperationService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+
+import static com.fbs.user.util.DateUtility.convertToFbsFormat;
 
 @Service
 public class UserOperationServiceImpl implements UserOperationService {
@@ -40,24 +45,27 @@ public class UserOperationServiceImpl implements UserOperationService {
     }
 
     @Override
-    public BookTicket bookTicket(String flightNumber, BookTicket bookTicket) {
+    public BookTicket bookTicket(String flightNumber, BookTicketDTO bookTicketDTO) {
         if (flightNumber != null) {
+            BookTicket ticket = new BookTicket();
             Optional<FlightSchedule> flightSchedule = searchFlightRepository.findScheduledFlight(flightNumber);
             if (flightSchedule.isPresent()) {
-                bookTicket.setPNRNumber("PNR" + new Random().nextInt());
-                bookTicket.setFlightNumber(flightSchedule.get().getFlightNumber());
-                bookTicket.setToPlace(flightSchedule.get().getToLocation());
-                bookTicket.setArrivalDate(flightSchedule.get().getEndDateTime());
-
+                BeanUtils.copyProperties(bookTicketDTO, ticket, bookTicketDTO.getDepartureDate());
+                ticket.setPnrNo("PNR" + new Random().nextInt());
+                ticket.setFlightNumber(flightSchedule.get().getFlightNumber());
+                ticket.setArrivalDate(flightSchedule.get().getEndDateTime());
+                ticket.setStatus("Booked");
+                if (bookTicketDTO.getDepartureDate() != null) {
+                    ticket.setDepartureDate((LocalDateTime) convertToFbsFormat(bookTicketDTO.getDepartureDate()));
+                }
                 Optional<Flight> flight = flightRepository.findById(flightNumber);
                 if (flight.isPresent()) {
-                    flight.get().setAvailableSeats(flight.get().getAvailableSeats() - bookTicket.getSeats());
+                    flight.get().setAvailableSeats(flight.get().getAvailableSeats() - bookTicketDTO.getSeats());
                     flightRepository.save(flight.get());
                 }
-                BookTicket ticket = bookTicketRepository.save(bookTicket);
-                return ticket;
+                return bookTicketRepository.save(ticket);
             } else {
-                throw new FBSException("scheduled flight not found with this " + flightNumber + " flight number, please take another flight number");
+                throw new FBSException("scheduled flight not found with this " + flightNumber + " flight number, please take another flight number.");
             }
         } else {
             throw new FBSException("Flight number required to book ticket.");
@@ -70,7 +78,30 @@ public class UserOperationServiceImpl implements UserOperationService {
     }
 
     @Override
-    public List<BookTicket> searchByPnr(String PNRNumber) throws FBSException {
-        return bookTicketRepository.searchByPnr(PNRNumber);
+    public List<BookTicket> searchByPnr(String pnrNo) throws FBSException {
+        return bookTicketRepository.searchByPnr(pnrNo);
+    }
+
+    @Override
+    public String cancelTicket(String pnrNo, String status) throws FBSException {
+        if (status.equalsIgnoreCase("cancel")) {
+            int count = bookTicketRepository.cancelTicket(pnrNo, "Cancelled");
+            if (count == 1) {
+                List<BookTicket> bookTickets = bookTicketRepository.searchByPnr(pnrNo);
+                if (bookTickets != null && !bookTickets.isEmpty()) {
+                    bookTickets.forEach(bookTicket -> {
+                        if (bookTicket.getFlightNumber() != null && !bookTickets.isEmpty()) {
+                            Optional<Flight> flight = flightRepository.findById(bookTicket.getFlightNumber());
+                            if (flight.isPresent()) {
+                                flight.get().setAvailableSeats(bookTicket.getSeats() + flight.get().getAvailableSeats());
+                                flightRepository.save(flight.get());
+                            }
+                        }
+                    });
+                }
+                status = "ticket cancelled";
+            }
+        }
+        return status;
     }
 }
