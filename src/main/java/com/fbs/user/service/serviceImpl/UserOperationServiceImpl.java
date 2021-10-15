@@ -1,10 +1,12 @@
 package com.fbs.user.service.serviceImpl;
 
 import com.fbs.user.exceptions.FBSException;
+import com.fbs.user.model.Airline;
 import com.fbs.user.model.BookTicket;
 import com.fbs.user.model.Flight;
 import com.fbs.user.model.FlightSchedule;
 import com.fbs.user.model.dto.BookTicketDTO;
+import com.fbs.user.repository.AirlineRepository;
 import com.fbs.user.repository.BookTicketRepository;
 import com.fbs.user.repository.FlightRepository;
 import com.fbs.user.repository.SearchFlightRepository;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -26,6 +29,9 @@ public class UserOperationServiceImpl implements UserOperationService {
     private FlightRepository flightRepository;
 
     @Autowired
+    private AirlineRepository airlineRepository;
+
+    @Autowired
     private SearchFlightRepository searchFlightRepository;
 
     @Autowired
@@ -35,8 +41,20 @@ public class UserOperationServiceImpl implements UserOperationService {
     public List<FlightSchedule> findFlightSchedule(String fromLocation, String toLocation) throws FBSException {
         if (fromLocation != null && toLocation != null) {
             List<FlightSchedule> flightSchedule = searchFlightRepository.findScheduledFlights(fromLocation, toLocation);
+            List<FlightSchedule> flightSchedules = new ArrayList<>();
             if (!flightSchedule.isEmpty()) {
-                return flightSchedule;
+                for (FlightSchedule fs : flightSchedule) {
+                    FlightSchedule schedule = new FlightSchedule();
+                    if (fs.getAirLineCode() != null) {
+                        Optional<Airline> airline = airlineRepository.findById(fs.getAirLineCode());
+                        if (airline.isPresent()) {
+                            if (airline.get().getStatus().toString().equalsIgnoreCase("false")) {
+                                flightSchedules.add(fs);
+                            }
+                        }
+                    }
+                }
+                return flightSchedules;
             } else
                 throw new FBSException("flight schedule is not available");
         } else {
