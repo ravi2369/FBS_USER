@@ -31,10 +31,10 @@ public class UserOperationController {
         }
     }
 
-    @PutMapping(value = "/cancel/{pnrNo}/{status}")
-    public ResponseEntity cancelTicket(@PathVariable String pnrNo, @PathVariable String status) {
+    @PutMapping(value = "/cancel/{pnrNo}")
+    public ResponseEntity cancelTicket(@PathVariable String pnrNo) {
         try {
-            return ResponseEntity.ok().body(userOperationService.cancelTicket(pnrNo, status));
+            return ResponseEntity.ok().body(userOperationService.cancelTicket(pnrNo));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

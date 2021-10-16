@@ -16,5 +16,5 @@ public interface UserOperationService {
 
     List<BookTicket> searchByPnr(String pnrNo) throws FBSException;
 
-    String cancelTicket(String pnrNo, String status) throws FBSException;
+    String cancelTicket(String pnrNo) throws FBSException;
 }

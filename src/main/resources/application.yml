@@ -4,6 +4,8 @@ server:
   port: 9002
 
 spring:
+  application:
+    name: user-client
   main:
     allow-bean-definition-overriding: true
   datasource:

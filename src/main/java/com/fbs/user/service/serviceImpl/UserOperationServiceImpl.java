@@ -15,13 +15,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-
-import static com.fbs.user.util.DateUtility.convertToFbsFormat;
 
 @Service
 public class UserOperationServiceImpl implements UserOperationService {
@@ -71,11 +68,14 @@ public class UserOperationServiceImpl implements UserOperationService {
                 BeanUtils.copyProperties(bookTicketDTO, ticket, bookTicketDTO.getDepartureDate());
                 ticket.setPnrNo("PNR" + new Random().nextInt());
                 ticket.setFlightNumber(flightSchedule.get().getFlightNumber());
+                ticket.setDepartureDate(flightSchedule.get().getStartDateTime());
                 ticket.setArrivalDate(flightSchedule.get().getEndDateTime());
+                ticket.setFromPlace(flightSchedule.get().getFromLocation());
+                ticket.setToPlace(flightSchedule.get().getToLocation());
                 ticket.setStatus("Booked");
-                if (bookTicketDTO.getDepartureDate() != null) {
+               /* if (bookTicketDTO.getDepartureDate() != null) {
                     ticket.setDepartureDate((LocalDateTime) convertToFbsFormat(bookTicketDTO.getDepartureDate()));
-                }
+                }*/
                 Optional<Flight> flight = flightRepository.findById(flightNumber);
                 if (flight.isPresent()) {
                     flight.get().setAvailableSeats(flight.get().getAvailableSeats() - bookTicketDTO.getSeats());
@@ -101,24 +101,23 @@ public class UserOperationServiceImpl implements UserOperationService {
     }
 
     @Override
-    public String cancelTicket(String pnrNo, String status) throws FBSException {
-        if (status.equalsIgnoreCase("cancel")) {
-            int count = bookTicketRepository.cancelTicket(pnrNo, "Cancelled");
-            if (count == 1) {
-                List<BookTicket> bookTickets = bookTicketRepository.searchByPnr(pnrNo);
-                if (bookTickets != null && !bookTickets.isEmpty()) {
-                    bookTickets.forEach(bookTicket -> {
-                        if (bookTicket.getFlightNumber() != null && !bookTickets.isEmpty()) {
-                            Optional<Flight> flight = flightRepository.findById(bookTicket.getFlightNumber());
-                            if (flight.isPresent()) {
-                                flight.get().setAvailableSeats(bookTicket.getSeats() + flight.get().getAvailableSeats());
-                                flightRepository.save(flight.get());
-                            }
+    public String cancelTicket(String pnrNo) throws FBSException {
+        String status = null;
+        int count = bookTicketRepository.cancelTicket(pnrNo, "Cancelled");
+        if (count == 1) {
+            List<BookTicket> bookTickets = bookTicketRepository.searchByPnr(pnrNo);
+            if (bookTickets != null && !bookTickets.isEmpty()) {
+                bookTickets.forEach(bookTicket -> {
+                    if (bookTicket.getFlightNumber() != null && !bookTickets.isEmpty()) {
+                        Optional<Flight> flight = flightRepository.findById(bookTicket.getFlightNumber());
+                        if (flight.isPresent()) {
+                            flight.get().setAvailableSeats(bookTicket.getSeats() + flight.get().getAvailableSeats());
+                            flightRepository.save(flight.get());
                         }
-                    });
-                }
-                status = "ticket cancelled";
+                    }
+                });
             }
+            status = "ticket cancelled";
         }
         return status;
     }
