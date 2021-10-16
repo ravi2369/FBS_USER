@@ -16,14 +16,15 @@ spring:
       #      transaction-isolation: TRANSACTION_READ_UNCOMMITTED
       connection-timeout: 30000
       max-lifetime: 1800000
-    url: jdbc:mysql://localhost:3306/fbs_dev
-    username: root
-    password: root
+#    url: jdbc:mysql://localhost:3306/fbs_dev
+#    username: root
+#    password: root
+#    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://fbsdev.c4tdwjqq25qf.us-east-2.rds.amazonaws.com:3306/fbs_dev
+    username: admin
+    password: admindev
     driverClassName: com.mysql.cj.jdbc.Driver
-  #    url: jdbc:sqlserver://localhost:1433;databaseName=FBS_DEV;
-  #    username: SIGWDEV
-  #    password: SGDEV
-  #    driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
 
   jpa:
     hibernate.ddl-auto: update
@@ -39,7 +40,7 @@ admin:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:11161/eureka/
+      defaultZone: http://localhost:9003/eureka/
 
 
 
